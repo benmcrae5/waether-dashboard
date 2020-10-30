@@ -9,25 +9,32 @@
         integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" 
         crossorigin="anonymous" />
     </head>
-    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" 
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" 
+        href="./assets/css/style.css">
 <body>
     <header>
-        <h1>Weather Dashboard</h1>
+        <h1 class="navbar-brand">Weather Dashboard</h1>
     </header>
 
     <main class="container">
         <div class="row">
             <!--Search Form & History-->
-            <div class="col-12 col-md-3">
-                <form action="">
-                    <label for="city-name"></label>
-                    <input type="text" id="city-name" name="city-name">
-                    <input type="submit" value="submit">
+            <div class="col-12 col-sm-4">
+                <label for="city-name">Search for a City:</label>
+                <form action="" class="input-group search-form">
+                    <div>
+                        <input type="text" class="form-control" id="city-name" name="city-name">
+                    </div>
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-outline-secondary" value="submit"><i class="fa fa-search"></i></button>
+                    </div>        
                 </form>
             </div>
             <!--Search Results-->
-            <div class="col-12 col-md-9">
-
+            <div class="col-12 col-sm-8">
+                <p>Placeholder Lorem ipsum dolor sit amet consectetur, adipisicing elit. Architecto delectus, eos repudiandae beatae minus amet eligendi, ullam nostrum magnam voluptates veniam provident reiciendis ipsa cumque tenetur commodi, est cum consequuntur.</p>
             </div>
         </div>
     </main>
