@@ -13,9 +13,13 @@ header {
     padding: 20px;
 }
 
+.today-card img {
+    height: 2em;
+    width: 2em;
+}
+
 .five-day-display {
     padding: 10px;
-    height: 100px;
 }
 
 .five-day-display div {
@@ -31,4 +35,8 @@ header {
 .five-day-display div img {
     height: 30px;
     width: 30px;
+}
+
+.card {
+    background-color: #a0aece80;
 }

@@ -16,7 +16,7 @@ let getCityCoordinates = function (city) {
         .then(function(object) {
             cityCoord["lon"] = object.coord.lon;
             cityCoord["lat"] = object.coord.lat;
-            console.log(city);
+            //console.log(object);
             getTodayWeather(cityCoord, city);
         })
 }
@@ -24,32 +24,37 @@ let getCityCoordinates = function (city) {
 let setWeatherIcon = function(condition) {
     let icon;
     switch (condition) {
-    case sunny: 
+    case "Clear": 
         icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/sun-512.png";
         break;
-    case partlyCloudy:
+    /*case partlyCloudy:
         icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/cloudy-512.png";
-        break;
-    case cloudy:
+        break; */
+    case "Clouds":
         icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/cloud-512.png";
         break;
-    case rain:
+    case "Rain":
         icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/rain-cloud-512.png";
-        break;
-    case storm:
+        "break";
+    case "Thunderstorm":
         icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/flash-cloud-512.png";
         break;
-    case snow:
+    case "Snow":
         icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/snow-512.png"
+        break;
+    default:
+        icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/sun-512.png";
+        break;
     }
     return icon;
 }
 
 let displayTodayCard = function (todayObject, cityName) {
     let todayCard = $("<div>").addClass("card today-card");
-    let weatherIcon = setWeatherIcon(todayObject.)
+    console.log(todayObject);
+    let weatherIcon = setWeatherIcon(todayObject.daily[0].weather[0].main);
     $("<h4>").addClass("card-title")
-        .html(cityName + "")
+        .html(cityName + " <img height='2em' width='2em' src='" + weatherIcon + "' alt='404'>")
         .appendTo(todayCard);
     $("<h5>").addClass("card-title")
         .text(todayDate.format("l"))
@@ -80,16 +85,17 @@ let displayTodayCard = function (todayObject, cityName) {
 }
 
 let display5DayCard = function (fiveDayObject, cityName) {
-    let fiveDayCard = $("<div>").addClass("five-day-display row");
+    let fiveDayCard = $("<div>").addClass("five-day-display d-flex flex-column flex-lg-row justify-content-between");
 
     for (let i = 0; i < 5; i++) {
-        let dayCard = $("<div>").addClass("card today-card col-12 col-lg-2");
+        let dayCard = $("<div>").addClass("card today-card");
+        let weatherIcon = setWeatherIcon(fiveDayObject.daily[i+1].weather[0].main);
 
         $("<h5>").addClass("card-title")
             .text(todayDate.add(1, "days").format("l"))
             .appendTo(dayCard);
         $('<img>')
-            .attr("src", "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/sun-512.png")
+            .attr("src", weatherIcon)
             .appendTo(dayCard);
         $("<p>").addClass("today-temp card-text")
             .text("Temp: " + fiveDayObject.daily[i + 1].temp.day + " °F")
