@@ -1,27 +1,102 @@
-let formEl = $(".search-form")
-let apiKey = "03cfdfb45efe945bd0f5f118d4004d6b"
+let formEl = $(".search-form");
+let searchDivEl = $(".search-results");
+let apiKey = "03cfdfb45efe945bd0f5f118d4004d6b";
+
+let searchHistory = JSON.stringify(localStorage.getItem("WeatherDashboard")) || [];
+
+let apiUrl;
+let todayDate = new Date();
+let cityCoord = {"lon": 0, "lat": 0};
+
+
+let getCityCoordinates = function (city) {
+    let apiUrlForCoord = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=imperial";
+    fetch (apiUrlForCoord)
+        .then(response => response.json())
+        .then(function(object) {
+            cityCoord["lon"] = object.coord.lon;
+            cityCoord["lat"] = object.coord.lat;
+            getTodayForecast2(cityCoord, city);
+        })
+}
+
+let displayTodayCard = function (todayObject, cityName) {
+    let todayCard = $("<div>").addClass("card today-card");
+
+    $("<div>").addClass("card-body").appendTo(todayCard);
+    $("<h4>").addClass("card-title").text(cityName).appendTo(todayCard);
+    $("<h5>").addClass("card-title").text(todayDate).appendTo(todayCard);
+    $("<p>").addClass("today-temp card-text").text("Temperature: " + todayObject.daily[0].temp.day).appendTo(todayCard);
+    $("<p>").addClass("today-humidity card-text").text("Humidity: " + todayObject.daily[0].humidity).appendTo(todayCard);
+    $("<p>").addClass("today-wind-speed card-text").text("Wind Speed: " + todayObject.daily[0].wind_speed).appendTo(todayCard);
+    $("<p>").addClass("today-uvindex card-text").text("UV Index: " + todayObject.daily[0].uvi).appendTo(todayCard);
+
+    todayCard.appendTo(searchDivEl);
+
+}
+
+let display5DayCard = function (fiveDayObject) {
+    
+}
+
+
+let testAPIData = function(apiUrl, city) {
+    console.log("Today's forecast");
+    apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=imperial";
+    let todayData = fetch(apiUrl)
+        .then(response => response.json())
+        .then(x => console.log(x));
+}
 
 //create fetch function for today's forecast
-let getTodayForecast = function(apiUrl) {
-    console.log("Today's forecast");
-    let todayData = fetch(apiUrl).then(response => response.json())
-    console.log(todayData);
+let getTodayForecast2 = function(cityCoord) {
+
+    apiUrl = "http://api.openweathermap.org/data/2.5/onecall?lat=" + cityCoord["lat"] + "&lon=" + cityCoord["lon"] + "&units=imperial&appid=" + apiKey;
+
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(function(obj) {
+            displayTodayCard(obj)
+            console.log(obj);
+        });
+}
+
+//create fetch function for today's forecast
+let getTodayForecast = function(city) {
+    getCityCoordinates(city);
+
+    apiUrl = "http://api.openweathermap.org/data/2.5/onecall?lat=" + cityCoord["lat"] + "&lon=" + cityCoord["lon"] + "&units=imperial&appid=" + apiKey;
+
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(obj => console.log(obj));
+    //YOU ARE HERE!!!
 }
 
 //create fetch function for five-day forecast
-let getFiveDayForecast = function(apiUrl) {
+let getFiveDayForecast = function(apiUrl, city) {
     console.log("5-day forecast");
+    apiUrl = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + apiKey + "&units=imperial";
+    let fiveDayData = fetch(apiUrl).then(response => response.json())
+    console.log(fiveDayData);
+}
 
+//put search history in local storage
+let updateSearchHistory = function(history) {
+    localStorage.setItem("WeatherDashboard", JSON.stringify(history));
 }
 
 //function for populating search results
 let runSearch = function(event) {
     event.preventDefault();
-    cityName = $("#city-name").val();
-    console.log(cityName);
-    let apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + apiKey;
-    let todayForecast = getTodayForecast(apiUrl);
-    let fiveDatForecast = getFiveDayForecast(apiUrl);
+    
+    let cityName = $("#city-name").val();
+    let todayForecast = getCityCoordinates(cityName);
+
+    //let fiveDayForecast = getFiveDayForecast()
+    let testInfo = testAPIData(apiUrl, cityName);
+    //let fiveDatForecast = getFiveDayForecast(apiUrl, cityName);
+
 }
 
 //event handler for submit on form
