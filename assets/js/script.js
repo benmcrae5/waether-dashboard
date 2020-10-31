@@ -16,30 +16,85 @@ let getCityCoordinates = function (city) {
         .then(function(object) {
             cityCoord["lon"] = object.coord.lon;
             cityCoord["lat"] = object.coord.lat;
-            getTodayForecast2(cityCoord, city);
+            console.log(city);
+            getTodayWeather(cityCoord, city);
         })
 }
 
 let displayTodayCard = function (todayObject, cityName) {
     let todayCard = $("<div>").addClass("card today-card");
 
-    $("<div>").addClass("card-body").appendTo(todayCard);
-    $("<h4>").addClass("card-title").text(cityName).appendTo(todayCard);
-    $("<h5>").addClass("card-title").text(todayDate).appendTo(todayCard);
-    $("<p>").addClass("today-temp card-text").text("Temperature: " + todayObject.daily[0].temp.day).appendTo(todayCard);
-    $("<p>").addClass("today-humidity card-text").text("Humidity: " + todayObject.daily[0].humidity).appendTo(todayCard);
-    $("<p>").addClass("today-wind-speed card-text").text("Wind Speed: " + todayObject.daily[0].wind_speed).appendTo(todayCard);
-    $("<p>").addClass("today-uvindex card-text").text("UV Index: " + todayObject.daily[0].uvi).appendTo(todayCard);
+    $("<h4>").addClass("card-title")
+        .text(cityName)
+        .appendTo(todayCard);
+    $("<h5>").addClass("card-title")
+        .text([todayDate.getMonth() + 1] + "-" + todayDate.getDate() + "-" + todayDate.getFullYear())
+        .appendTo(todayCard);
+    $("<p>").addClass("today-temp card-text")
+        .text("Temperature: " + todayObject.daily[0].temp.day + " °F")
+        .appendTo(todayCard);
+    $("<p>").addClass("today-humidity card-text")
+        .text("Humidity: " + todayObject.daily[0].humidity + "%")
+        .appendTo(todayCard);
+    $("<p>").addClass("today-wind-speed card-text")
+        .text("Wind Speed: " + todayObject.daily[0].wind_speed + " MPH")
+        .appendTo(todayCard);
+    let uviLevel = todayObject.daily[0].uvi;
+    let uviSpan = ""
+    if (uviLevel >= 0 && uviLevel < 3) {
+        uviSpan = '<span class="bg-success">' + uviLevel + '</span>';
+    } else if (uviLevel >= 3 && uviLevel < 7) {
+        uviSpan = '<span class="bg-warning">' + uviLevel + '</span>';
+    } else {
+        uviSpan = '<span class="bg-danger">' + uviLevel + '</span>';
+    }
+    $("<p>").addClass("today-uvindex card-text")
+        .html("UV Index: " + uviSpan)
+        .appendTo(todayCard);
 
     todayCard.appendTo(searchDivEl);
+}
+
+let display5DayCard = function (fiveDayObject, cityName) {
+    let fiveDayCard = $("<div>").addClass("five-day-display");
+
+    for (let i = 0; i < 5; i++) {
+        let todayCard = $("<div>").addClass("card today-card");
+
+        $("<h4>").addClass("card-title")
+            .text(cityName)
+            .appendTo(todayCard);
+        $("<h5>").addClass("card-title")
+            .text([todayDate.getMonth() + 1] + "-" + todayDate.getDate() + "-" + todayDate.getFullYear())
+            .appendTo(todayCard);
+        $("<p>").addClass("today-temp card-text")
+            .text("Temperature: " + todayObject.daily[0].temp.day + " °F")
+            .appendTo(todayCard);
+        $("<p>").addClass("today-humidity card-text")
+            .text("Humidity: " + todayObject.daily[0].humidity + "%")
+            .appendTo(todayCard);
+        $("<p>").addClass("today-wind-speed card-text")
+            .text("Wind Speed: " + todayObject.daily[0].wind_speed + " MPH")
+            .appendTo(todayCard);
+        let uviLevel = todayObject.daily[0].uvi;
+        let uviSpan = ""
+        if (uviLevel >= 0 && uviLevel < 3) {
+            uviSpan = '<span class="bg-success">' + uviLevel + '</span>';
+        } else if (uviLevel >= 3 && uviLevel < 7) {
+            uviSpan = '<span class="bg-warning">' + uviLevel + '</span>';
+        } else {
+            uviSpan = '<span class="bg-danger">' + uviLevel + '</span>';
+        }
+        $("<p>").addClass("today-uvindex card-text")
+            .html("UV Index: " + uviSpan)
+            .appendTo(todayCard);
+
+        todayCard.appendTo(searchDivEl);
+    }
 
 }
 
-let display5DayCard = function (fiveDayObject) {
-    
-}
-
-
+//NOT NEEDED!! FOR TESTING ONLY!!!
 let testAPIData = function(apiUrl, city) {
     console.log("Today's forecast");
     apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=imperial";
@@ -49,14 +104,14 @@ let testAPIData = function(apiUrl, city) {
 }
 
 //create fetch function for today's forecast
-let getTodayForecast2 = function(cityCoord) {
+let getTodayWeather = function(cityCoord, city) {
 
-    apiUrl = "http://api.openweathermap.org/data/2.5/onecall?lat=" + cityCoord["lat"] + "&lon=" + cityCoord["lon"] + "&units=imperial&appid=" + apiKey;
+    apiUrl = "http://api.openweathermap.org/data/2.5/onecall?lat=" + cityCoord["lat"] + "&lon=" + cityCoord["lon"] + "&units=imperial&exclude=minutely&appid=" + apiKey;
 
     fetch(apiUrl)
         .then(response => response.json())
         .then(function(obj) {
-            displayTodayCard(obj)
+            displayTodayCard(obj, city);
             console.log(obj);
         });
 }
@@ -91,10 +146,11 @@ let runSearch = function(event) {
     event.preventDefault();
     
     let cityName = $("#city-name").val();
+
     let todayForecast = getCityCoordinates(cityName);
 
     //let fiveDayForecast = getFiveDayForecast()
-    let testInfo = testAPIData(apiUrl, cityName);
+    //let testInfo = testAPIData(apiUrl, cityName);
     //let fiveDatForecast = getFiveDayForecast(apiUrl, cityName);
 
 }

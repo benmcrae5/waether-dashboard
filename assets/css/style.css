@@ -8,3 +8,7 @@ header {
 .navbar-brand {
     font-size: 3em;
 }
+
+.search-results .today-card {
+    padding: 20px;
+}
