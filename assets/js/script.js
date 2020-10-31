@@ -5,7 +5,7 @@ let apiKey = "03cfdfb45efe945bd0f5f118d4004d6b";
 let searchHistory = JSON.stringify(localStorage.getItem("WeatherDashboard")) || [];
 
 let apiUrl;
-let todayDate = new Date();
+let todayDate = moment();
 let cityCoord = {"lon": 0, "lat": 0};
 
 
@@ -21,14 +21,38 @@ let getCityCoordinates = function (city) {
         })
 }
 
+let setWeatherIcon = function(condition) {
+    let icon;
+    switch (condition) {
+    case sunny: 
+        icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/sun-512.png";
+        break;
+    case partlyCloudy:
+        icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/cloudy-512.png";
+        break;
+    case cloudy:
+        icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/cloud-512.png";
+        break;
+    case rain:
+        icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/rain-cloud-512.png";
+        break;
+    case storm:
+        icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/flash-cloud-512.png";
+        break;
+    case snow:
+        icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/snow-512.png"
+    }
+    return icon;
+}
+
 let displayTodayCard = function (todayObject, cityName) {
     let todayCard = $("<div>").addClass("card today-card");
-
+    let weatherIcon = setWeatherIcon(todayObject.)
     $("<h4>").addClass("card-title")
-        .text(cityName)
+        .html(cityName + "")
         .appendTo(todayCard);
     $("<h5>").addClass("card-title")
-        .text([todayDate.getMonth() + 1] + "-" + todayDate.getDate() + "-" + todayDate.getFullYear())
+        .text(todayDate.format("l"))
         .appendTo(todayCard);
     $("<p>").addClass("today-temp card-text")
         .text("Temperature: " + todayObject.daily[0].temp.day + " °F")
@@ -56,27 +80,27 @@ let displayTodayCard = function (todayObject, cityName) {
 }
 
 let display5DayCard = function (fiveDayObject, cityName) {
-    let fiveDayCard = $("<div>").addClass("five-day-display");
+    let fiveDayCard = $("<div>").addClass("five-day-display row");
 
     for (let i = 0; i < 5; i++) {
-        let todayCard = $("<div>").addClass("card today-card");
+        let dayCard = $("<div>").addClass("card today-card col-12 col-lg-2");
 
-        $("<h4>").addClass("card-title")
-            .text(cityName)
-            .appendTo(todayCard);
         $("<h5>").addClass("card-title")
-            .text([todayDate.getMonth() + 1] + "-" + todayDate.getDate() + "-" + todayDate.getFullYear())
-            .appendTo(todayCard);
+            .text(todayDate.add(1, "days").format("l"))
+            .appendTo(dayCard);
+        $('<img>')
+            .attr("src", "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/sun-512.png")
+            .appendTo(dayCard);
         $("<p>").addClass("today-temp card-text")
-            .text("Temperature: " + todayObject.daily[0].temp.day + " °F")
-            .appendTo(todayCard);
+            .text("Temp: " + fiveDayObject.daily[i + 1].temp.day + " °F")
+            .appendTo(dayCard);
         $("<p>").addClass("today-humidity card-text")
-            .text("Humidity: " + todayObject.daily[0].humidity + "%")
-            .appendTo(todayCard);
-        $("<p>").addClass("today-wind-speed card-text")
-            .text("Wind Speed: " + todayObject.daily[0].wind_speed + " MPH")
-            .appendTo(todayCard);
-        let uviLevel = todayObject.daily[0].uvi;
+            .text("Humidity: " + fiveDayObject.daily[i + 1].humidity + "%")
+            .appendTo(dayCard);
+        /*$("<p>").addClass("today-wind-speed card-text")
+            .text("Wind: " + fiveDayObject.daily[i + 1].wind_speed + " MPH")
+            .appendTo(dayCard);
+        let uviLevel = fiveDayObject.daily[i + 1].uvi;
         let uviSpan = ""
         if (uviLevel >= 0 && uviLevel < 3) {
             uviSpan = '<span class="bg-success">' + uviLevel + '</span>';
@@ -87,11 +111,12 @@ let display5DayCard = function (fiveDayObject, cityName) {
         }
         $("<p>").addClass("today-uvindex card-text")
             .html("UV Index: " + uviSpan)
-            .appendTo(todayCard);
-
-        todayCard.appendTo(searchDivEl);
+            .appendTo(dayCard);
+        */
+        dayCard.appendTo(fiveDayCard);
     }
 
+    fiveDayCard.appendTo(searchDivEl);
 }
 
 //NOT NEEDED!! FOR TESTING ONLY!!!
@@ -112,6 +137,7 @@ let getTodayWeather = function(cityCoord, city) {
         .then(response => response.json())
         .then(function(obj) {
             displayTodayCard(obj, city);
+            display5DayCard(obj, city);
             console.log(obj);
         });
 }

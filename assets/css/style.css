@@ -12,3 +12,23 @@ header {
 .search-results .today-card {
     padding: 20px;
 }
+
+.five-day-display {
+    padding: 10px;
+    height: 100px;
+}
+
+.five-day-display div {
+    margin: 5px;
+    font-size: .75em;
+}
+
+.five-day-display div h5 {
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.five-day-display div img {
+    height: 30px;
+    width: 30px;
+}
