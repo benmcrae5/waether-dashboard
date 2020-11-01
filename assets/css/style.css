@@ -9,6 +9,27 @@ header {
     font-size: 3em;
 }
 
+.search-history {
+    display: flex;
+    justify-content: flex-start;
+    flex-flow: column;
+    text-align: center;
+}
+
+.search-history p {
+    list-style: none;
+    text-decoration: none;
+    font-size: 1.5em;
+    border: 1px darkslategrey solid;
+    margin: 2px;
+    width: 82%
+}
+
+.search-history p:hover {
+    transition: .75s;
+    background-color: #88c7aa;
+}
+
 .search-results .today-card {
     padding: 20px;
 }

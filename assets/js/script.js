@@ -2,7 +2,7 @@ let formEl = $(".search-form");
 let searchDivEl = $(".search-results");
 let apiKey = "03cfdfb45efe945bd0f5f118d4004d6b";
 
-let searchHistory = JSON.stringify(localStorage.getItem("WeatherDashboard")) || [];
+let searchHistory = JSON.parse(localStorage.getItem("WeatherDashboard")) ||  [];
 
 let apiUrl;
 let todayDate = moment();
@@ -16,7 +16,6 @@ let getCityCoordinates = function (city) {
         .then(function(object) {
             cityCoord["lon"] = object.coord.lon;
             cityCoord["lat"] = object.coord.lat;
-            //console.log(object);
             getTodayWeather(cityCoord, city);
         })
 }
@@ -27,9 +26,6 @@ let setWeatherIcon = function(condition) {
     case "Clear": 
         icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/sun-512.png";
         break;
-    /*case partlyCloudy:
-        icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/cloudy-512.png";
-        break; */
     case "Clouds":
         icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/cloud-512.png";
         break;
@@ -51,7 +47,6 @@ let setWeatherIcon = function(condition) {
 
 let displayTodayCard = function (todayObject, cityName) {
     let todayCard = $("<div>").addClass("card today-card");
-    console.log(todayObject);
     let weatherIcon = setWeatherIcon(todayObject.daily[0].weather[0].main);
     $("<h4>").addClass("card-title")
         .html(cityName + " <img height='2em' width='2em' src='" + weatherIcon + "' alt='404'>")
@@ -125,15 +120,6 @@ let display5DayCard = function (fiveDayObject, cityName) {
     fiveDayCard.appendTo(searchDivEl);
 }
 
-//NOT NEEDED!! FOR TESTING ONLY!!!
-let testAPIData = function(apiUrl, city) {
-    console.log("Today's forecast");
-    apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=imperial";
-    let todayData = fetch(apiUrl)
-        .then(response => response.json())
-        .then(x => console.log(x));
-}
-
 //create fetch function for today's forecast
 let getTodayWeather = function(cityCoord, city) {
 
@@ -144,7 +130,6 @@ let getTodayWeather = function(cityCoord, city) {
         .then(function(obj) {
             displayTodayCard(obj, city);
             display5DayCard(obj, city);
-            console.log(obj);
         });
 }
 
@@ -162,30 +147,61 @@ let getTodayForecast = function(city) {
 
 //create fetch function for five-day forecast
 let getFiveDayForecast = function(apiUrl, city) {
-    console.log("5-day forecast");
     apiUrl = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + apiKey + "&units=imperial";
     let fiveDayData = fetch(apiUrl).then(response => response.json())
     console.log(fiveDayData);
 }
 
 //put search history in local storage
-let updateSearchHistory = function(history) {
-    localStorage.setItem("WeatherDashboard", JSON.stringify(history));
+let updateSearchHistory = function(city, history) {
+    if (!history.includes(city)) {
+        history.push(city);
+        $("<p>").addClass("city-search " + city).text(city).appendTo(".search-history");
+        localStorage.setItem("WeatherDashboard", JSON.stringify(history));
+    }
+}
+
+//NOT NEEDED!! FOR TESTING ONLY!!!
+let testAPIData = function(apiUrl, city) {
+    apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + apiKey + "&units=imperial";
+    let todayData = fetch(apiUrl)
+        .then(response => response.json())
+        .then(x => console.log(x));
 }
 
 //function for populating search results
 let runSearch = function(event) {
     event.preventDefault();
-    
+    $(".search-results").empty();
+
+    console.log(event.type);
+    console.log(event.target);
     let cityName = $("#city-name").val();
 
-    let todayForecast = getCityCoordinates(cityName);
+    if (event.type === "click") {
+        cityName = event.target.textContent;
+    }
+    
+    getCityCoordinates(cityName);
+    updateSearchHistory(cityName, searchHistory);
+}
 
-    //let fiveDayForecast = getFiveDayForecast()
-    //let testInfo = testAPIData(apiUrl, cityName);
-    //let fiveDatForecast = getFiveDayForecast(apiUrl, cityName);
+let populateSearchHistory = function() {
+    for (let i = 0; i < searchHistory.length; i++) {
+        $("<p>").addClass("city-search " + searchHistory[i]).text(searchHistory[i]).appendTo(".search-history")
+    }
+}
 
+populateSearchHistory();
+
+let testHandler = function(event) {
+    let p = event.target
+    console.log(p, event.type);
+    console.log(p.textContent);
 }
 
 //event handler for submit on form
 formEl.on("submit", runSearch);
+
+//clicking a search history element to submit element
+$(".search-history").on("click", "p", runSearch);
