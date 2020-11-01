@@ -37,7 +37,7 @@ let setWeatherIcon = function(condition) {
         break;
     case "Rain":
         icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/rain-cloud-512.png";
-        "break";
+        break;
     case "Thunderstorm":
         icon = "https://cdn3.iconfinder.com/data/icons/tiny-weather-1/512/flash-cloud-512.png";
         break;
@@ -131,7 +131,7 @@ let display5DayCard = function (fiveDayObject, cityName) {
 //create fetch function for today's forecast
 let getTodayWeather = function(cityCoord, city) {
 
-    apiUrl = "http://api.openweathermap.org/data/2.5/onecall?lat=" + cityCoord["lat"] + "&lon=" + cityCoord["lon"] + "&units=imperial&exclude=minutely&appid=" + apiKey;
+    apiUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=" + cityCoord["lat"] + "&lon=" + cityCoord["lon"] + "&units=imperial&exclude=minutely&appid=" + apiKey;
 
     fetch(apiUrl)
         .then(response => response.json())
