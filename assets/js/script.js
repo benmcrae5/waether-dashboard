@@ -138,6 +138,7 @@ let getTodayWeather = function(cityCoord, city) {
         .then(function(obj) {
             displayTodayCard(obj, city);
             display5DayCard(obj, city);
+            updateSearchHistory(city, searchHistory);
         });
 }
 
@@ -149,8 +150,6 @@ let getFiveDayForecast = function(apiUrl, city) {
 
 //update the search history variable and UI, then put search history in local storage
 let updateSearchHistory = function(city, history) {
-    console.log("TEST6")
-
     if (!history.includes(city)) {
         history.push(city);
         $("<p>")
@@ -164,23 +163,14 @@ let updateSearchHistory = function(city, history) {
 //function for populating search results
 let runSearch = function(event) {
     event.preventDefault();
-
     $(".search-results").empty();
-
 
     let cityName = $("#city-name").val();
     if (event.type === "click") {
         cityName = event.target.textContent;
     }
 
-    let initiate = getCityCoordinates(cityName);
-
-
-    if (initiate) {
-        console.log("TEST: SAVE")
-
-        updateSearchHistory(cityName, searchHistory);
-    }
+    getCityCoordinates(cityName);
 }
 
 let populateSearchHistory = function() {
